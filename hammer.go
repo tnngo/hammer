@@ -111,6 +111,8 @@ func (v *Hammer) Build() {
 					v.vrs[i] = h
 				}
 			}
+		} else {
+			v.vrs = append(v.vrs, h)
 		}
 	}
 
