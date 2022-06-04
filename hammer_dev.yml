@@ -1,0 +1,39 @@
+grpc:
+  name: test1
+  port: 30000
+# http:
+#   name: test2
+#   port: 9000
+remote:
+  -
+    msname: moat
+    addr: localhost:10000
+orm:
+  max_open_conns: 100
+  max_idle_conns: 10
+  options:
+    -
+      ip: localhost
+      port: 3306
+      user: root
+      password: abcdef 或 "123456"
+      database: ms1
+    -
+      ip: localhost
+      port: 3306
+      user: root
+      password: abcdef 或 "123456"
+      database: ms2
+logger:
+  file:
+    filename: hammer.log
+    max_size: 100
+    max_backups: 10
+    max_age: 100
+    compress: true
+  collect:
+    addr: http://localhost
+    udid: abc
+    group: abc
+    username: abc
+    password: abc
