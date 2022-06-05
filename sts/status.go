@@ -1,7 +1,7 @@
 package sts
 
 type Status struct {
-	Code int         `json:"code"`
+	Code string      `json:"code"`
 	Msg  string      `json:"msg"`
 	Data interface{} `json:"data"`
 }
