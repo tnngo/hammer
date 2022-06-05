@@ -81,25 +81,21 @@ func (j *Jwt) LoginHandle(ctx *gin.Context) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	var (
 		tokenStr string
-		tokenErr error
 	)
 	if signature != "" {
-		tokenStr, tokenErr = token.SignedString(signature)
+		tk, err := token.SignedString([]byte(signature))
 		if err != nil {
-			j.LoginError(ctx, tokenErr)
+			j.LoginError(ctx, err)
 			return
 		}
+		tokenStr = tk
 	} else {
-		tokenStr, tokenErr = token.SigningString()
+		tk, err := token.SigningString()
 		if err != nil {
-			j.LoginError(ctx, tokenErr)
+			j.LoginError(ctx, err)
 			return
 		}
-	}
-
-	if tokenErr != nil {
-		j.LoginError(ctx, tokenErr)
-		return
+		tokenStr = tk
 	}
 
 	if j.LoginResponse != nil {
