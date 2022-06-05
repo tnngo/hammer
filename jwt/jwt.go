@@ -97,6 +97,11 @@ func (j *Jwt) LoginHandle(ctx *gin.Context) {
 		}
 	}
 
+	if tokenErr != nil {
+		j.LoginError(ctx, tokenErr)
+		return
+	}
+
 	if j.LoginResponse != nil {
 		j.LoginResponse(ctx, tokenStr)
 	}
