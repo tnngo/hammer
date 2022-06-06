@@ -8,7 +8,34 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/tnngo/hammer/sts"
 )
+
+var (
+	ErrClaimsNotFound = errors.New("获取令牌身份信息出错, 将终止操作")
+)
+
+func Claims(ctx *gin.Context, key string) interface{} {
+	if ctx.Keys["claims"] == nil {
+		(&Jwt{}).AuthorizeHandle(ctx)
+	}
+
+	if v, ok := ctx.Keys["claims"]; ok {
+		if v1, ok := v.(MapClaims); ok {
+			if v2, ok := v1[key]; ok {
+				return v2
+			}
+		}
+	}
+
+	ctx.JSON(401, sts.Status{
+		Code: "401",
+		Msg:  ErrClaimsNotFound.Error(),
+		Data: nil,
+	})
+
+	return nil
+}
 
 type Jwt struct {
 	// 超时时长
@@ -112,8 +139,6 @@ var (
 	// ErrSignatureIsInvalid 签名无效。
 	ErrSignatureIsInvalid = errors.New("签名无效")
 	ErrTokenIsExpired     = errors.New("Token已过期")
-
-	ErrClaimsNotFound = errors.New("获取令牌身份信息出错, 将终止操作")
 )
 
 type MapClaims = jwt.MapClaims
