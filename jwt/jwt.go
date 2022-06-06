@@ -184,7 +184,7 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 		auth = authorization
 	}
 
-	if auth == "" {
+	if auth == "" || auth == "null" {
 		if j.AuthorizeError != nil {
 			j.AuthorizeError(ctx, ErrTokenValueNil)
 			return
