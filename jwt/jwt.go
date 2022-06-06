@@ -200,9 +200,7 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 		return []byte(token.Claims.(MapClaims)["signature"].(string)), nil
 	})
 
-	if claims, ok := token.Claims.(MapClaims); ok && token.Valid {
-		ctx.Set("claims", claims)
-	} else {
+	if err != nil {
 		switch err.Error() {
 		case "signature is invalid":
 			if j.AuthorizeError != nil {
@@ -216,6 +214,11 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 			if j.AuthorizeError != nil {
 				j.AuthorizeError(ctx, err)
 			}
+		}
+
+	} else {
+		if claims, ok := token.Claims.(MapClaims); ok && token.Valid {
+			ctx.Set("claims", claims)
 		}
 	}
 }
