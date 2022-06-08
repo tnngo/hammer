@@ -38,6 +38,7 @@ func Claims(ctx *gin.Context, key string) interface{} {
 }
 
 type Jwt struct {
+	Key []byte
 	// 超时时长
 	Timeout time.Duration
 	// token对应的http header名称。
@@ -51,7 +52,7 @@ type Jwt struct {
 	TokenError    func(*gin.Context, error)
 
 	// Login 自定义jwt生成
-	Login         func(*gin.Context) (string, map[string]interface{}, error)
+	Login         func(*gin.Context) (map[string]interface{}, error)
 	LoginResponse func(*gin.Context, string, string)
 	// Error 登录业务错误，如密码不正确，参数不正确等。
 	LoginError func(*gin.Context, error)
@@ -83,7 +84,7 @@ func (j *Jwt) TokenHandle(ctx *gin.Context) {
 // LoginHandle 通常作用域登录/注册，或其他相关验证合法用户的路由。
 func (j *Jwt) LoginHandle(ctx *gin.Context) {
 	// 如果g.Authorize等于nil，则任其崩溃。否则AuthorizeHandle函数就没有任何意义。
-	signature, maps, err := j.Login(ctx)
+	maps, err := j.Login(ctx)
 	if err != nil {
 		j.LoginError(ctx, err)
 		return
@@ -108,8 +109,8 @@ func (j *Jwt) LoginHandle(ctx *gin.Context) {
 	var (
 		tokenStr string
 	)
-	if signature != "" {
-		tk, err := token.SignedString([]byte(signature))
+	if len(j.Key) != 0 {
+		tk, err := token.SignedString(j.Key)
 		if err != nil {
 			j.LoginError(ctx, err)
 			return
