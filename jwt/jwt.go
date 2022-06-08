@@ -52,12 +52,12 @@ type Jwt struct {
 
 	// Login 自定义jwt生成
 	Login         func(*gin.Context) (string, map[string]interface{}, error)
-	LoginResponse func(*gin.Context, string)
+	LoginResponse func(*gin.Context, string, string)
 	// Error 登录业务错误，如密码不正确，参数不正确等。
 	LoginError func(*gin.Context, error)
 
 	// 黑名单
-	Blacklist func(*gin.Context)
+	Blacklist func(*gin.Context, string) bool
 	// AuthorizeError 授权错误回调。
 	AuthorizeError func(*gin.Context, error)
 }
@@ -92,7 +92,6 @@ func (j *Jwt) LoginHandle(ctx *gin.Context) {
 	// 创建token
 	claims := jwt.MapClaims{}
 	t := time.Now()
-	claims["signature"] = signature
 
 	if j.Timeout != time.Duration(0) {
 		// 令牌过期时间戳。
@@ -126,7 +125,7 @@ func (j *Jwt) LoginHandle(ctx *gin.Context) {
 	}
 
 	if j.LoginResponse != nil {
-		j.LoginResponse(ctx, tokenStr)
+		j.LoginResponse(ctx, tokenStr, token.Signature)
 	}
 }
 
@@ -218,6 +217,13 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 
 	} else {
 		if claims, ok := token.Claims.(MapClaims); ok && token.Valid {
+			// 如果验证通过，则需要确定黑名单
+			if j.Blacklist != nil {
+				if j.Blacklist(ctx, token.Signature) {
+					j.AuthorizeError(ctx, errors.New("非法请求"))
+					return
+				}
+			}
 			ctx.Set("claims", claims)
 		}
 	}
