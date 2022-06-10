@@ -94,6 +94,11 @@ func (j *Jwt) LoginHandle(ctx *gin.Context) {
 		for k, v := range maps {
 			ctx.Set(k, v)
 		}
+		token, err := j.Parse(tokenStr)
+		if err != nil {
+			j.AuthorizeError(ctx, err)
+			return
+		}
 		j.LoginResponse(ctx, tokenStr, token.Signature)
 	}
 }

@@ -17,5 +17,10 @@ func TestJwt_LoginHandle(t *testing.T) {
 		return maps, nil
 	}
 
-	j.LoginHandle(nil)
+	j.LoginResponse = func(ctx *gin.Context, s1, s2 string) {
+		t.Log(s1)
+		t.Log(s2)
+	}
+
+	j.LoginHandle(&gin.Context{})
 }
