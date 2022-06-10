@@ -119,9 +119,9 @@ func (j *Jwt) LoginHandle(ctx *gin.Context) {
 }
 
 var (
-	ErrTokenKeyNil     = errors.New("Token对应的http header键为空")
-	ErrTokenRule       = errors.New("Token规则错误, 无法分离scheme和value")
-	ErrTokenHeadScheme = errors.New("与定义的scheme不匹配")
+	ErrTokenKeyNil     = errors.New("无法获取Token请求头")
+	ErrTokenRule       = errors.New("请求头无法分离scheme和值")
+	ErrTokenHeadScheme = errors.New("请求头中的scheme不匹配")
 	ErrTokenValueNil   = errors.New("Token值为空")
 
 	// ErrSignatureIsInvalid 签名无效。
