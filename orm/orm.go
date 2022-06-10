@@ -92,8 +92,8 @@ func (o *Orm) buildOnce() {
 		}
 
 		config := &gorm.Config{
-			NamingStrategy: schema.NamingStrategy{SingularTable: true},
-			// SkipDefaultTransaction: true,
+			NamingStrategy:         schema.NamingStrategy{SingularTable: true},
+			SkipDefaultTransaction: true,
 		}
 		config.Logger = gl.Default.LogMode(gormLevel(o.Level))
 
