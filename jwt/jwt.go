@@ -41,7 +41,7 @@ type Jwt struct {
 
 	// Login 自定义jwt生成
 	Login         func(*gin.Context) (map[string]interface{}, error)
-	LoginResponse func(*gin.Context, string, string, map[string]interface{})
+	LoginResponse func(*gin.Context, string, string)
 	// Error 登录业务错误，如密码不正确，参数不正确等。
 	LoginError func(*gin.Context, error)
 
@@ -114,7 +114,8 @@ func (j *Jwt) LoginHandle(ctx *gin.Context) {
 	}
 
 	if j.LoginResponse != nil {
-		j.LoginResponse(ctx, tokenStr, token.Signature, maps)
+		ctx.Set("claims", claims)
+		j.LoginResponse(ctx, tokenStr, token.Signature)
 	}
 }
 
