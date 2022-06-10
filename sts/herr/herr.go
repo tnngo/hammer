@@ -17,6 +17,6 @@ func OKNoContent() *sts.Status {
 // 401
 func Unauthorized() *sts.Status {
 	return &sts.Status{
-		Code: "SIGN_ERROR",
+		Code: "Unauthorized",
 	}
 }

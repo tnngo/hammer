@@ -25,9 +25,12 @@ func (s *Status) SetDetails(details interface{}) *Status {
 }
 
 func (s *Status) Resp(ctx *gin.Context) {
-	if s.Code != "" {
-		ctx.JSON(200, nil)
-	} else {
-		ctx.JSON(204, s)
+	switch s.Code {
+	case "OK":
+		ctx.JSON(200, s)
+	case "":
+		ctx.JSON(204, nil)
+	case "Unauthorized":
+		ctx.JSON(401, s)
 	}
 }
