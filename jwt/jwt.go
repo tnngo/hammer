@@ -45,6 +45,8 @@ type Jwt struct {
 	// Error 登录业务错误，如密码不正确，参数不正确等。
 	LoginError func(*gin.Context, error)
 
+	// 获取签名
+	Signature (*gin.Context)
 	// 黑名单
 	Blacklist func(*gin.Context, string) bool
 	// AuthorizeError 授权错误回调。
@@ -53,20 +55,6 @@ type Jwt struct {
 
 func (j *Jwt) Header(headName, schemeName string) {
 	j.headName, j.schemeName = headName, schemeName
-}
-
-// TokenHandle 通常作用域登录/注册，或其他相关验证合法用户的路由。
-func (j *Jwt) TokenHandle(ctx *gin.Context) {
-	// 如果g.Authorize等于nil，则任其崩溃。否则AuthorizeHandle函数就没有任何意义。
-	value, err := j.TokenFrom(ctx)
-	if err != nil {
-		j.TokenError(ctx, err)
-		return
-	}
-
-	if j.TokenResponse != nil {
-		j.TokenResponse(ctx, value)
-	}
 }
 
 // LoginHandle 通常作用域登录/注册，或其他相关验证合法用户的路由。
@@ -216,7 +204,9 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 					return
 				}
 			}
-			ctx.Set("claims", claims)
+			for k, v := range claims {
+				ctx.Set(k, v)
+			}
 		}
 	}
 }
