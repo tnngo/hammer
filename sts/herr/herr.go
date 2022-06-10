@@ -27,3 +27,10 @@ func SignError() *sts.Status {
 		Code: "SIGN_ERROR",
 	}
 }
+
+// 500
+func SystemError() *sts.Status {
+	return &sts.Status{
+		Code: "SYSTEM_ERROR",
+	}
+}

@@ -34,5 +34,7 @@ func (s *Status) Resp(ctx *gin.Context) {
 		ctx.JSON(400, s)
 	case "SIGN_ERROR":
 		ctx.JSON(401, s)
+	case "SYSTEM_ERROR":
+		ctx.JSON(500, s)
 	}
 }
