@@ -10,7 +10,7 @@ func OK() *sts.Status {
 }
 
 // 204
-func OkNoContent() *sts.Status {
+func OKNoContent() *sts.Status {
 	return &sts.Status{}
 }
 
