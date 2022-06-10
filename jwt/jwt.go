@@ -8,18 +8,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/tnngo/hammer/sts"
 )
 
 var (
-	ErrClaimsNotFound = errors.New("获取令牌身份信息出错, 将终止操作")
+	ErrClaimsNotFound = errors.New("获取令牌身份信息出错")
 )
 
 func Claims(ctx *gin.Context, key string) interface{} {
-	if ctx.Keys["claims"] == nil {
-		(&Jwt{}).AuthorizeHandle(ctx)
-	}
-
 	if v, ok := ctx.Keys["claims"]; ok {
 		if v1, ok := v.(MapClaims); ok {
 			if v2, ok := v1[key]; ok {
@@ -27,13 +22,6 @@ func Claims(ctx *gin.Context, key string) interface{} {
 			}
 		}
 	}
-
-	ctx.JSON(401, sts.Status{
-		Code: "401",
-		Msg:  ErrClaimsNotFound.Error(),
-		Data: nil,
-	})
-
 	return nil
 }
 
@@ -131,9 +119,9 @@ func (j *Jwt) LoginHandle(ctx *gin.Context) {
 }
 
 var (
-	ErrTokenKeyNil     = errors.New("Token对应的http header键为空")
-	ErrTokenRule       = errors.New("Token规则错误, 无法分离scheme和value")
-	ErrTokenHeadScheme = errors.New("与定义的scheme不匹配")
+	ErrTokenKeyNil     = errors.New("无法获取Token请求头")
+	ErrTokenRule       = errors.New("请求头无法分离scheme和值")
+	ErrTokenHeadScheme = errors.New("请求头中的scheme不匹配")
 	ErrTokenValueNil   = errors.New("Token值为空")
 
 	// ErrSignatureIsInvalid 签名无效。
