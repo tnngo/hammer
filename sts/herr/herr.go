@@ -14,9 +14,16 @@ func OKNoContent() *sts.Status {
 	return &sts.Status{}
 }
 
-// 401
-func Unauthorized() *sts.Status {
+// 400
+func ParamError() *sts.Status {
 	return &sts.Status{
-		Code: "Unauthorized",
+		Code: "PARAM_ERROR",
+	}
+}
+
+// 401
+func SignError() *sts.Status {
+	return &sts.Status{
+		Code: "SIGN_ERROR",
 	}
 }

@@ -30,7 +30,9 @@ func (s *Status) Resp(ctx *gin.Context) {
 		ctx.JSON(200, s)
 	case "":
 		ctx.JSON(204, nil)
-	case "Unauthorized":
+	case "PARAM_ERROR":
+		ctx.JSON(400, s)
+	case "SIGN_ERROR":
 		ctx.JSON(401, s)
 	}
 }
