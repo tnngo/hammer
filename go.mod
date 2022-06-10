@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/gin-gonic/gin v1.8.0
+	github.com/golang-jwt/jwt/v4 v4.4.1
 	github.com/tnngo/lad v1.23.2
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -20,7 +21,6 @@ require (
 	github.com/go-playground/validator/v10 v10.10.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/goccy/go-json v0.9.7 // indirect
-	github.com/golang-jwt/jwt/v4 v4.4.1 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
