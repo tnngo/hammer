@@ -14,17 +14,6 @@ var (
 	ErrClaimsNotFound = errors.New("获取令牌身份信息出错")
 )
 
-func Claims(ctx *gin.Context, key string) interface{} {
-	if v, ok := ctx.Keys["claims"]; ok {
-		if v1, ok := v.(MapClaims); ok {
-			if v2, ok := v1[key]; ok {
-				return v2
-			}
-		}
-	}
-	return nil
-}
-
 type Jwt struct {
 	Key []byte
 	// 超时时长
