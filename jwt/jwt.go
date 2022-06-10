@@ -188,7 +188,7 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return []byte(token.Claims.(MapClaims)["signature"].(string)), nil
+		return j.Key, nil
 	})
 
 	if err != nil {
