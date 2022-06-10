@@ -159,15 +159,7 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 		}
 	}
 
-	// 解析并验证传入的token。
-	token, err := jwt.Parse(auth, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-		}
-
-		return j.Key, nil
-	})
-
+	token, err := j.Parse(auth)
 	if err != nil {
 		switch err.Error() {
 		case "signature is invalid":
@@ -198,4 +190,16 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 			}
 		}
 	}
+}
+
+func (j *Jwt) Parse(auth string) (*jwt.Token, error) {
+	// 解析并验证传入的token。
+	token, err := jwt.Parse(auth, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+
+		return j.Key, nil
+	})
+	return token, err
 }
