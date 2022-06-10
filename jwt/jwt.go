@@ -114,7 +114,9 @@ func (j *Jwt) LoginHandle(ctx *gin.Context) {
 	}
 
 	if j.LoginResponse != nil {
-		ctx.Set("claims", claims)
+		for k, v := range maps {
+			ctx.Set(k, v)
+		}
 		j.LoginResponse(ctx, tokenStr, token.Signature)
 	}
 }
