@@ -10,7 +10,7 @@ func OK() *sts.Status {
 }
 
 // 204
-func ONC() *sts.Status {
+func NC() *sts.Status {
 	return &sts.Status{}
 }
 
