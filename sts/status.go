@@ -5,8 +5,9 @@ import "github.com/gin-gonic/gin"
 type Status struct {
 	Code    string      `json:"code"`
 	Msg     string      `json:"msg"`
-	Data    interface{} `json:"data"`
-	Details interface{} `json:"details"`
+	Data    interface{} `json:"data,omitempty"`
+	Details interface{} `json:"details,omitempty"`
+	Total   int         `json:"total,omitempty"`
 }
 
 func (s *Status) SetMsg(msg string) *Status {
@@ -21,6 +22,11 @@ func (s *Status) SetData(data interface{}) *Status {
 
 func (s *Status) SetDetails(details interface{}) *Status {
 	s.Details = details
+	return s
+}
+
+func (s *Status) SetTotal(total int) *Status {
+	s.Total = total
 	return s
 }
 
