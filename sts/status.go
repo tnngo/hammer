@@ -7,8 +7,8 @@ import (
 type Status struct {
 	Success bool        `json:"success"`
 	Code    int         `json:"code"`
-	Msg     string      `json:"msg"`
-	Status  string      `json:"status"`
+	Msg     string      `json:"msg,omitempty"`
+	Status  string      `json:"status,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
 	Details interface{} `json:"details,omitempty"`
 	Total   int         `json:"total,omitempty"`
