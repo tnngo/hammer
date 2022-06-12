@@ -1,10 +1,14 @@
 package sts
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 type Status struct {
-	Code    string      `json:"code"`
+	Success bool        `json:"success"`
+	Code    int         `json:"code"`
 	Msg     string      `json:"msg"`
+	Status  string      `json:"status"`
 	Data    interface{} `json:"data,omitempty"`
 	Details interface{} `json:"details,omitempty"`
 	Total   int         `json:"total,omitempty"`
@@ -32,15 +36,13 @@ func (s *Status) SetTotal(total int) *Status {
 
 func (s *Status) Resp(ctx *gin.Context) {
 	switch s.Code {
-	case "OK":
+	case 0:
 		ctx.JSON(200, s)
-	case "":
-		ctx.JSON(204, nil)
-	case "PARAM_ERROR":
+	case 3:
 		ctx.JSON(400, s)
-	case "SIGN_ERROR":
+	case 16:
 		ctx.JSON(401, s)
-	case "SYSTEM_ERROR":
+	case 13:
 		ctx.JSON(500, s)
 	}
 }

@@ -5,32 +5,31 @@ import "github.com/tnngo/hammer/sts"
 // 200
 func OK() *sts.Status {
 	return &sts.Status{
-		Code: "OK",
+		Code:    0,
+		Success: true,
 	}
 }
 
-// 204
-func NC() *sts.Status {
-	return &sts.Status{}
-}
-
 // 400
-func ParamError() *sts.Status {
+func InvalidArgument() *sts.Status {
 	return &sts.Status{
-		Code: "PARAM_ERROR",
+		Code:    400,
+		Success: false,
 	}
 }
 
 // 401
-func SignError() *sts.Status {
+func Unauthenticated() *sts.Status {
 	return &sts.Status{
-		Code: "SIGN_ERROR",
+		Code:    401,
+		Success: false,
 	}
 }
 
 // 500
-func SystemError() *sts.Status {
+func Internal() *sts.Status {
 	return &sts.Status{
-		Code: "SYSTEM_ERROR",
+		Code:    500,
+		Success: false,
 	}
 }
