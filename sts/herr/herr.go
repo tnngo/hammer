@@ -13,7 +13,7 @@ func OK() *sts.Status {
 // 400
 func InvalidArgument() *sts.Status {
 	return &sts.Status{
-		Code:    400,
+		Code:    3,
 		Success: false,
 	}
 }
@@ -21,7 +21,7 @@ func InvalidArgument() *sts.Status {
 // 401
 func Unauthenticated() *sts.Status {
 	return &sts.Status{
-		Code:    401,
+		Code:    16,
 		Success: false,
 	}
 }
@@ -29,7 +29,7 @@ func Unauthenticated() *sts.Status {
 // 500
 func Internal() *sts.Status {
 	return &sts.Status{
-		Code:    500,
+		Code:    13,
 		Success: false,
 	}
 }
