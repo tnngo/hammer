@@ -37,7 +37,7 @@ type Jwt struct {
 	// 获取签名
 	Signature (*gin.Context)
 	// 黑名单
-	Blacklist func(*gin.Context, string) bool
+	Blacklist func(*gin.Context, string)
 	// AuthorizeError 授权错误回调。
 	AuthorizeError func(*gin.Context, error)
 }
@@ -185,9 +185,8 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 		if claims, ok := token.Claims.(MapClaims); ok && token.Valid {
 			// 如果验证通过，则需要确定黑名单
 			if j.Blacklist != nil {
-				if j.Blacklist(ctx, token.Signature) {
-					return
-				}
+				j.Blacklist(ctx, token.Signature)
+				return
 			}
 			for k, v := range claims {
 				ctx.Set(k, v)
