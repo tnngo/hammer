@@ -186,7 +186,6 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 			// 如果验证通过，则需要确定黑名单
 			if j.Blacklist != nil {
 				if j.Blacklist(ctx, token.Signature) {
-					j.AuthorizeError(ctx, errors.New("非法请求"))
 					return
 				}
 			}
