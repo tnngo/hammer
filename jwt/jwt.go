@@ -183,13 +183,12 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 
 	} else {
 		if claims, ok := token.Claims.(MapClaims); ok && token.Valid {
+			for k, v := range claims {
+				ctx.Set(k, v)
+			}
 			// 如果验证通过，则需要确定黑名单
 			if j.Blacklist != nil {
 				j.Blacklist(ctx, token.Signature)
-				return
-			}
-			for k, v := range claims {
-				ctx.Set(k, v)
 			}
 		}
 	}
