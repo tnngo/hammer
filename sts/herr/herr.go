@@ -26,6 +26,14 @@ func Unauthenticated() *sts.Status {
 	}
 }
 
+// 403
+func PermissionDenied() *sts.Status {
+	return &sts.Status{
+		Code:    7,
+		Success: false,
+	}
+}
+
 // 500
 func Internal() *sts.Status {
 	return &sts.Status{
