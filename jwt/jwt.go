@@ -17,7 +17,7 @@ var (
 type Jwt struct {
 	Key []byte
 	// 超时时长
-	Timeout time.Duration
+	Timeout int
 	// token对应的http header名称。
 	headName string
 	// token对应的http header名称中的方案别名，如Bearer。
@@ -59,9 +59,9 @@ func (j *Jwt) LoginHandle(ctx *gin.Context) {
 	claims := jwt.MapClaims{}
 	t := time.Now()
 
-	if j.Timeout != time.Duration(0) {
+	if j.Timeout != 0 {
 		// 令牌过期时间戳。
-		claims["exp"] = t.Add(j.Timeout).Unix()
+		claims["exp"] = j.Timeout
 	}
 	// 令牌颁发的时间戳。
 	claims["iat"] = t.Unix()
