@@ -46,6 +46,8 @@ func (s *Status) Resp(ctx *gin.Context) {
 		ctx.JSON(400, s)
 	case 16:
 		ctx.JSON(401, s)
+	case 7:
+		ctx.JSON(403, s)
 	case 13:
 		ctx.JSON(500, s)
 	}
