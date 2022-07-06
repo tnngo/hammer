@@ -29,7 +29,7 @@ func Unauthenticated() *sts.Status {
 }
 
 // 403
-func PermissionDenied(msg string) *sts.Status {
+func PermissionDenied() *sts.Status {
 	return &sts.Status{
 		Code:    7,
 		Success: false,
@@ -38,7 +38,7 @@ func PermissionDenied(msg string) *sts.Status {
 }
 
 // 500
-func Internal(msg string) *sts.Status {
+func Internal() *sts.Status {
 	return &sts.Status{
 		Code:    13,
 		Success: false,
