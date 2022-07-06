@@ -11,33 +11,37 @@ func OK() *sts.Status {
 }
 
 // 400
-func InvalidArgument() *sts.Status {
+func InvalidArgument(msg string) *sts.Status {
 	return &sts.Status{
 		Code:    3,
 		Success: false,
+		Msg:     msg,
 	}
 }
 
 // 401
-func Unauthenticated() *sts.Status {
+func Unauthenticated(msg string) *sts.Status {
 	return &sts.Status{
 		Code:    16,
 		Success: false,
+		Status:  msg,
 	}
 }
 
 // 403
-func PermissionDenied() *sts.Status {
+func PermissionDenied(msg string) *sts.Status {
 	return &sts.Status{
 		Code:    7,
 		Success: false,
+		Status:  msg,
 	}
 }
 
 // 500
-func Internal() *sts.Status {
+func Internal(msg string) *sts.Status {
 	return &sts.Status{
 		Code:    13,
 		Success: false,
+		Msg:     msg,
 	}
 }
