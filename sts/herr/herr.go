@@ -11,20 +11,20 @@ func OK() *sts.Status {
 }
 
 // 400
-func InvalidArgument(msg string) *sts.Status {
+func InvalidArgument() *sts.Status {
 	return &sts.Status{
 		Code:    3,
 		Success: false,
-		Msg:     msg,
+		Msg:     "参数错误",
 	}
 }
 
 // 401
-func Unauthenticated(msg string) *sts.Status {
+func Unauthenticated() *sts.Status {
 	return &sts.Status{
 		Code:    16,
 		Success: false,
-		Status:  msg,
+		Msg:     "安全权限错误",
 	}
 }
 
@@ -33,7 +33,7 @@ func PermissionDenied(msg string) *sts.Status {
 	return &sts.Status{
 		Code:    7,
 		Success: false,
-		Status:  msg,
+		Msg:     "没有操作权限",
 	}
 }
 
@@ -42,6 +42,6 @@ func Internal(msg string) *sts.Status {
 	return &sts.Status{
 		Code:    13,
 		Success: false,
-		Msg:     msg,
+		Msg:     "服务器内部发生异常",
 	}
 }
