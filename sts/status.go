@@ -34,6 +34,10 @@ func (s *Status) SetTotal(total int) *Status {
 	return s
 }
 
+func (s *Status) Error() string {
+	return s.Msg
+}
+
 func (s *Status) Resp(ctx *gin.Context) {
 	switch s.Code {
 	case 0:
