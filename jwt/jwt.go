@@ -19,7 +19,7 @@ var (
 // JWT内部用户结构
 type User struct {
 	Id        int
-	Key       string
+	Key       []byte
 	ExpiredAt time.Time
 }
 
