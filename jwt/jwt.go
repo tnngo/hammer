@@ -197,7 +197,7 @@ func (j *Jwt) Parse(auth, key string) (*jwt.Token, error) {
 				key = v.(string)
 			}
 			if v, ok := claims["sub"]; ok {
-				sub = v.(int)
+				sub = int(v.(float64))
 			}
 		} else {
 			return nil, ErrTokenIllegal
