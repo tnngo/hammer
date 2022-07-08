@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -13,8 +14,12 @@ import (
 )
 
 var (
-	ErrClaimsNotFound = errors.New("获取令牌身份信息出错")
+	whitelist sync.Map
 )
+
+func SetWhitelist(userId int, userKey string) {
+	whitelist.Store(userId, userKey)
+}
 
 // JWT内部用户结构
 type User struct {
@@ -183,7 +188,29 @@ func (j *Jwt) Parse(auth, key string) (*jwt.Token, error) {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return token, nil
+		var (
+			sub int
+			key string
+		)
+		if claims, ok := token.Claims.(MapClaims); ok && token.Valid {
+			if v, ok := claims["key"]; ok {
+				key = v.(string)
+			}
+			if v, ok := claims["sub"]; ok {
+				sub = v.(int)
+			}
+		} else {
+			return nil, ErrTokenIllegal
+		}
+
+		if v, ok := whitelist.Load(sub); ok {
+			if v.(string) != key {
+				return nil, ErrTokenIllegal
+			}
+		}
+
+		return []byte(key), nil
+
 	})
 	return token, err
 }
