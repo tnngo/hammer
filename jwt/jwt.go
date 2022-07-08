@@ -8,6 +8,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/tnngo/hammer/sts/herr"
+	"github.com/tnngo/lad"
 )
 
 var (
@@ -74,7 +76,8 @@ func (j *Jwt) LoginHandle(ctx *gin.Context) {
 	)
 	tk, err := token.SignedString(u.Key)
 	if err != nil {
-		j.LoginError(ctx, err)
+		lad.L().Error(err.Error())
+		j.LoginError(ctx, herr.Unauthenticated())
 		return
 	}
 	tokenStr = tk
@@ -105,6 +108,7 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 	}
 	authorization := ctx.Request.Header.Get(j.headName)
 	if authorization == "" {
+		lad.L().Error("未传请求头参数Authorization")
 		if j.AuthorizeError != nil {
 			j.AuthorizeError(ctx, ErrTokenIllegal)
 		}
@@ -116,6 +120,7 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 	if j.schemeName != "" {
 		strs := strings.Split(authorization, " ")
 		if len(strs) != 2 {
+			lad.L().Error("请求头Authorization参数值错误: " + authorization)
 			if j.AuthorizeError != nil {
 				j.AuthorizeError(ctx, ErrTokenIllegal)
 			}
@@ -123,6 +128,7 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 		}
 
 		if strs[0] != j.schemeName {
+			lad.L().Error("请求头Authorization参数中的scheme错误: " + strs[0])
 			if j.AuthorizeError != nil {
 				j.AuthorizeError(ctx, ErrTokenIllegal)
 				return
@@ -134,6 +140,7 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 	}
 
 	if auth == "" || auth == "null" {
+		lad.L().Error("请求头Authorization参数中的token为空")
 		if j.AuthorizeError != nil {
 			j.AuthorizeError(ctx, ErrTokenIllegal)
 			return
@@ -153,7 +160,8 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 			}
 		default:
 			if j.AuthorizeError != nil {
-				j.AuthorizeError(ctx, err)
+				lad.L().Error("jwt解析错误: " + err.Error())
+				j.AuthorizeError(ctx, herr.Unauthenticated())
 			}
 		}
 
