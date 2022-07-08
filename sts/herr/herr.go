@@ -24,7 +24,7 @@ func Unauthenticated() *sts.Status {
 	return &sts.Status{
 		Code:    16,
 		Success: false,
-		Msg:     "安全权限错误",
+		Msg:     "签权失败",
 	}
 }
 
