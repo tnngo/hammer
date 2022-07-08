@@ -83,14 +83,11 @@ func (j *Jwt) LoginHandle(ctx *gin.Context) {
 }
 
 var (
-	ErrTokenKeyNil     = errors.New("无法获取Token请求头")
-	ErrTokenRule       = errors.New("请求头无法分离scheme和值")
-	ErrTokenHeadScheme = errors.New("请求头中的scheme不匹配")
-	ErrTokenValueNil   = errors.New("Token值为空")
+	ErrTokenIllegal = errors.New("非法请求")
 
 	// ErrSignatureIsInvalid 签名无效。
-	ErrSignatureIsInvalid = errors.New("签名无效")
-	ErrTokenIsExpired     = errors.New("Token已过期")
+	ErrTokenInvalid   = errors.New("签名无效")
+	ErrTokenIsExpired = errors.New("账号已过期")
 )
 
 type MapClaims = jwt.MapClaims
@@ -109,7 +106,7 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 	authorization := ctx.Request.Header.Get(j.headName)
 	if authorization == "" {
 		if j.AuthorizeError != nil {
-			j.AuthorizeError(ctx, ErrTokenKeyNil)
+			j.AuthorizeError(ctx, ErrTokenIllegal)
 		}
 		return
 	}
@@ -120,14 +117,14 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 		strs := strings.Split(authorization, " ")
 		if len(strs) != 2 {
 			if j.AuthorizeError != nil {
-				j.AuthorizeError(ctx, ErrTokenRule)
+				j.AuthorizeError(ctx, ErrTokenIllegal)
 			}
 			return
 		}
 
 		if strs[0] != j.schemeName {
 			if j.AuthorizeError != nil {
-				j.AuthorizeError(ctx, ErrTokenHeadScheme)
+				j.AuthorizeError(ctx, ErrTokenIllegal)
 				return
 			}
 		}
@@ -138,7 +135,7 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 
 	if auth == "" || auth == "null" {
 		if j.AuthorizeError != nil {
-			j.AuthorizeError(ctx, ErrTokenValueNil)
+			j.AuthorizeError(ctx, ErrTokenIllegal)
 			return
 		}
 	}
@@ -148,7 +145,7 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 		switch err.Error() {
 		case "signature is invalid":
 			if j.AuthorizeError != nil {
-				j.AuthorizeError(ctx, ErrSignatureIsInvalid)
+				j.AuthorizeError(ctx, ErrTokenIllegal)
 			}
 		case "Token is expired":
 			if j.AuthorizeError != nil {
