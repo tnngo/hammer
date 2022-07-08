@@ -183,7 +183,7 @@ func (j *Jwt) Parse(auth, key string) (*jwt.Token, error) {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return []byte(key), nil
+		return token, nil
 	})
 	return token, err
 }
