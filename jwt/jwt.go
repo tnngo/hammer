@@ -19,7 +19,7 @@ var (
 // JWT内部用户结构
 type User struct {
 	Id        int
-	Key       []byte
+	Key       string
 	ExpiredAt time.Time
 }
 
@@ -70,12 +70,13 @@ func (j *Jwt) LoginHandle(ctx *gin.Context) {
 	// 令牌颁发的时间戳。
 	claims["iat"] = t.Unix()
 	claims["sub"] = u.Id
+	claims["key"] = u.Key
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	var (
 		tokenStr string
 	)
-	tk, err := token.SignedString(u.Key)
+	tk, err := token.SignedString([]byte(u.Key))
 	if err != nil {
 		lad.L().Error(err.Error())
 		j.LoginError(ctx, herr.Unauthenticated())
@@ -182,7 +183,7 @@ func (j *Jwt) Parse(auth, key string) (*jwt.Token, error) {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return key, nil
+		return []byte(key), nil
 	})
 	return token, err
 }
