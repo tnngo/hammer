@@ -192,7 +192,7 @@ func (j *Jwt) Parse(auth, key string) (*jwt.Token, error) {
 			sub int
 			key string
 		)
-		if claims, ok := token.Claims.(MapClaims); ok && token.Valid {
+		if claims, ok := token.Claims.(MapClaims); ok {
 			if v, ok := claims["key"]; ok {
 				key = v.(string)
 			}
