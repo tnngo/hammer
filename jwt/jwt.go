@@ -69,6 +69,7 @@ func (j *Jwt) LoginHandle(ctx *gin.Context) {
 	}
 	// 令牌颁发的时间戳。
 	claims["iat"] = t.Unix()
+	claims["sub"] = u.Id
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	var (
