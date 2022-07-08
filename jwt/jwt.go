@@ -14,10 +14,14 @@ var (
 	ErrClaimsNotFound = errors.New("获取令牌身份信息出错")
 )
 
+// JWT内部用户结构
+type User struct {
+	Id        int
+	Key       string
+	ExpiredAt time.Time
+}
+
 type Jwt struct {
-	Key []byte
-	// 超时时长
-	Timeout int
 	// token对应的http header名称。
 	headName string
 	// token对应的http header名称中的方案别名，如Bearer。
@@ -29,15 +33,13 @@ type Jwt struct {
 	TokenError    func(*gin.Context, error)
 
 	// Login 自定义jwt生成
-	Login         func(*gin.Context) (map[string]interface{}, error)
-	LoginResponse func(*gin.Context, string, string)
+	Login         func(*gin.Context) (*User, error)
+	LoginResponse func(*gin.Context, string)
 	// Error 登录业务错误，如密码不正确，参数不正确等。
 	LoginError func(*gin.Context, error)
 
 	// 获取签名
 	Signature (*gin.Context)
-	// 黑名单
-	Blacklist func(*gin.Context, string)
 	// AuthorizeError 授权错误回调。
 	AuthorizeError func(*gin.Context, error)
 }
@@ -48,8 +50,9 @@ func (j *Jwt) Header(headName, schemeName string) {
 
 // LoginHandle 通常作用域登录/注册，或其他相关验证合法用户的路由。
 func (j *Jwt) LoginHandle(ctx *gin.Context) {
+	// key := ctx.
 	// 如果g.Authorize等于nil，则任其崩溃。否则AuthorizeHandle函数就没有任何意义。
-	maps, err := j.Login(ctx)
+	u, err := j.Login(ctx)
 	if err != nil {
 		j.LoginError(ctx, err)
 		return
@@ -59,48 +62,24 @@ func (j *Jwt) LoginHandle(ctx *gin.Context) {
 	claims := jwt.MapClaims{}
 	t := time.Now()
 
-	if j.Timeout != 0 {
-		// 令牌过期时间戳。
-		claims["exp"] = j.Timeout
+	if !u.ExpiredAt.IsZero() {
+		claims["exp"] = int(u.ExpiredAt.Unix())
 	}
 	// 令牌颁发的时间戳。
 	claims["iat"] = t.Unix()
-
-	for k, v := range maps {
-		claims[k] = v
-	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	var (
 		tokenStr string
 	)
-	if len(j.Key) != 0 {
-		tk, err := token.SignedString(j.Key)
-		if err != nil {
-			j.LoginError(ctx, err)
-			return
-		}
-		tokenStr = tk
-	} else {
-		tk, err := token.SigningString()
-		if err != nil {
-			j.LoginError(ctx, err)
-			return
-		}
-		tokenStr = tk
+	tk, err := token.SignedString(u.Key)
+	if err != nil {
+		j.LoginError(ctx, err)
+		return
 	}
+	tokenStr = tk
 
-	if j.LoginResponse != nil {
-		for k, v := range maps {
-			ctx.Set(k, v)
-		}
-		token, err := j.Parse(tokenStr)
-		if err != nil {
-			j.AuthorizeError(ctx, err)
-			return
-		}
-		j.LoginResponse(ctx, tokenStr, token.Signature)
-	}
+	j.LoginResponse(ctx, tokenStr)
 }
 
 var (
@@ -164,7 +143,7 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 		}
 	}
 
-	token, err := j.Parse(auth)
+	token, err := j.Parse(auth, ctx.GetString("key"))
 	if err != nil {
 		switch err.Error() {
 		case "signature is invalid":
@@ -186,22 +165,18 @@ func (j *Jwt) AuthorizeHandle(ctx *gin.Context) {
 			for k, v := range claims {
 				ctx.Set(k, v)
 			}
-			// 如果验证通过，则需要确定黑名单
-			if j.Blacklist != nil {
-				j.Blacklist(ctx, token.Signature)
-			}
 		}
 	}
 }
 
-func (j *Jwt) Parse(auth string) (*jwt.Token, error) {
+func (j *Jwt) Parse(auth, key string) (*jwt.Token, error) {
 	// 解析并验证传入的token。
 	token, err := jwt.Parse(auth, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return j.Key, nil
+		return key, nil
 	})
 	return token, err
 }
