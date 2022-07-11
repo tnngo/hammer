@@ -26,6 +26,8 @@ type User struct {
 	Id        int
 	Key       string
 	ExpiredAt time.Time
+	Token     string
+	BXToken   string
 }
 
 type Jwt struct {
@@ -34,14 +36,9 @@ type Jwt struct {
 	// token对应的http header名称中的方案别名，如Bearer。
 	schemeName string
 
-	// TokenFrom 调用其他服务生成的token
-	TokenFrom     func(*gin.Context) (interface{}, error)
-	TokenResponse func(*gin.Context, interface{})
-	TokenError    func(*gin.Context, error)
-
 	// Login 自定义jwt生成
 	Login         func(*gin.Context) (*User, error)
-	LoginResponse func(*gin.Context, string)
+	LoginResponse func(*gin.Context, *User)
 	// Error 登录业务错误，如密码不正确，参数不正确等。
 	LoginError func(*gin.Context, error)
 
@@ -88,8 +85,9 @@ func (j *Jwt) LoginHandle(ctx *gin.Context) {
 		return
 	}
 	tokenStr = tk
+	u.Token = tokenStr
 
-	j.LoginResponse(ctx, tokenStr)
+	j.LoginResponse(ctx, u)
 }
 
 var (
